@@ -1,4 +1,4 @@
-module github.com/yaoguao/gw/proto
+module github.com/yaoguao/gw/protos
 
 go 1.24.0
 
