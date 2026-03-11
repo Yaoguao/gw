@@ -1,0 +1,13 @@
+env: "dev"
+grpc:
+  port: 44044
+  timeout: 2m
+
+storage:
+  postgres:
+    max_open_conns: 50
+    max_idle_conns: 50
+    max_idle_time: 10m
+    conn_attempts: 10
+    base_retry_delay: 100ms
+    max_retry_delay: 5s
