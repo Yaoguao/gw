@@ -79,7 +79,7 @@ type ExchangeRateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FromCurrency  string                 `protobuf:"bytes,1,opt,name=from_currency,json=fromCurrency,proto3" json:"from_currency,omitempty"`
 	ToCurrency    string                 `protobuf:"bytes,2,opt,name=to_currency,json=toCurrency,proto3" json:"to_currency,omitempty"`
-	Rate          float32                `protobuf:"fixed32,3,opt,name=rate,proto3" json:"rate,omitempty"`
+	Rate          float64                `protobuf:"fixed64,3,opt,name=rate,proto3" json:"rate,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -128,7 +128,7 @@ func (x *ExchangeRateResponse) GetToCurrency() string {
 	return ""
 }
 
-func (x *ExchangeRateResponse) GetRate() float32 {
+func (x *ExchangeRateResponse) GetRate() float64 {
 	if x != nil {
 		return x.Rate
 	}
@@ -138,7 +138,7 @@ func (x *ExchangeRateResponse) GetRate() float32 {
 // Ответ с курсами обмена всех валют
 type ExchangeRatesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Rates         map[string]float32     `protobuf:"bytes,1,rep,name=rates,proto3" json:"rates,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"fixed32,2,opt,name=value"` // ключ: валюта, значение: курс
+	Rates         map[string]float64     `protobuf:"bytes,1,rep,name=rates,proto3" json:"rates,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"fixed64,2,opt,name=value"` // ключ: валюта, значение: курс
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -173,11 +173,55 @@ func (*ExchangeRatesResponse) Descriptor() ([]byte, []int) {
 	return file_exchange_exchange_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ExchangeRatesResponse) GetRates() map[string]float32 {
+func (x *ExchangeRatesResponse) GetRates() map[string]float64 {
 	if x != nil {
 		return x.Rates
 	}
 	return nil
+}
+
+type ExchangeRateRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          string                 `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExchangeRateRequest) Reset() {
+	*x = ExchangeRateRequest{}
+	mi := &file_exchange_exchange_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExchangeRateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExchangeRateRequest) ProtoMessage() {}
+
+func (x *ExchangeRateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exchange_exchange_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExchangeRateRequest.ProtoReflect.Descriptor instead.
+func (*ExchangeRateRequest) Descriptor() ([]byte, []int) {
+	return file_exchange_exchange_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ExchangeRateRequest) GetBase() string {
+	if x != nil {
+		return x.Base
+	}
+	return ""
 }
 
 // Пустое сообщение
@@ -189,7 +233,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_exchange_exchange_proto_msgTypes[3]
+	mi := &file_exchange_exchange_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -201,7 +245,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_exchange_exchange_proto_msgTypes[3]
+	mi := &file_exchange_exchange_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -214,7 +258,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_exchange_exchange_proto_rawDescGZIP(), []int{3}
+	return file_exchange_exchange_proto_rawDescGZIP(), []int{4}
 }
 
 var File_exchange_exchange_proto protoreflect.FileDescriptor
@@ -230,16 +274,18 @@ const file_exchange_exchange_proto_rawDesc = "" +
 	"\rfrom_currency\x18\x01 \x01(\tR\ffromCurrency\x12\x1f\n" +
 	"\vto_currency\x18\x02 \x01(\tR\n" +
 	"toCurrency\x12\x12\n" +
-	"\x04rate\x18\x03 \x01(\x02R\x04rate\"\x93\x01\n" +
+	"\x04rate\x18\x03 \x01(\x01R\x04rate\"\x93\x01\n" +
 	"\x15ExchangeRatesResponse\x12@\n" +
 	"\x05rates\x18\x01 \x03(\v2*.exchange.ExchangeRatesResponse.RatesEntryR\x05rates\x1a8\n" +
 	"\n" +
 	"RatesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x02R\x05value:\x028\x01\"\a\n" +
-	"\x05Empty2\xb0\x01\n" +
-	"\x0fExchangeService\x12D\n" +
-	"\x10GetExchangeRates\x12\x0f.exchange.Empty\x1a\x1f.exchange.ExchangeRatesResponse\x12W\n" +
+	"\x05value\x18\x02 \x01(\x01R\x05value:\x028\x01\")\n" +
+	"\x13ExchangeRateRequest\x12\x12\n" +
+	"\x04base\x18\x01 \x01(\tR\x04base\"\a\n" +
+	"\x05Empty2\xbe\x01\n" +
+	"\x0fExchangeService\x12R\n" +
+	"\x10GetExchangeRates\x12\x1d.exchange.ExchangeRateRequest\x1a\x1f.exchange.ExchangeRatesResponse\x12W\n" +
 	"\x1aGetExchangeRateForCurrency\x12\x19.exchange.CurrencyRequest\x1a\x1e.exchange.ExchangeRateResponseB\x18Z\x16exchange.v1;exchangev1b\x06proto3"
 
 var (
@@ -254,17 +300,18 @@ func file_exchange_exchange_proto_rawDescGZIP() []byte {
 	return file_exchange_exchange_proto_rawDescData
 }
 
-var file_exchange_exchange_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_exchange_exchange_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_exchange_exchange_proto_goTypes = []any{
 	(*CurrencyRequest)(nil),       // 0: exchange.CurrencyRequest
 	(*ExchangeRateResponse)(nil),  // 1: exchange.ExchangeRateResponse
 	(*ExchangeRatesResponse)(nil), // 2: exchange.ExchangeRatesResponse
-	(*Empty)(nil),                 // 3: exchange.Empty
-	nil,                           // 4: exchange.ExchangeRatesResponse.RatesEntry
+	(*ExchangeRateRequest)(nil),   // 3: exchange.ExchangeRateRequest
+	(*Empty)(nil),                 // 4: exchange.Empty
+	nil,                           // 5: exchange.ExchangeRatesResponse.RatesEntry
 }
 var file_exchange_exchange_proto_depIdxs = []int32{
-	4, // 0: exchange.ExchangeRatesResponse.rates:type_name -> exchange.ExchangeRatesResponse.RatesEntry
-	3, // 1: exchange.ExchangeService.GetExchangeRates:input_type -> exchange.Empty
+	5, // 0: exchange.ExchangeRatesResponse.rates:type_name -> exchange.ExchangeRatesResponse.RatesEntry
+	3, // 1: exchange.ExchangeService.GetExchangeRates:input_type -> exchange.ExchangeRateRequest
 	0, // 2: exchange.ExchangeService.GetExchangeRateForCurrency:input_type -> exchange.CurrencyRequest
 	2, // 3: exchange.ExchangeService.GetExchangeRates:output_type -> exchange.ExchangeRatesResponse
 	1, // 4: exchange.ExchangeService.GetExchangeRateForCurrency:output_type -> exchange.ExchangeRateResponse
@@ -286,7 +333,7 @@ func file_exchange_exchange_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_exchange_exchange_proto_rawDesc), len(file_exchange_exchange_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

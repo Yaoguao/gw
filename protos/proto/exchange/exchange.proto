@@ -7,7 +7,7 @@ option go_package = "exchange.v1;exchangev1";
 // Определение сервиса
 service ExchangeService {
   // Получение курсов обмена всех валют
-  rpc GetExchangeRates(Empty) returns (ExchangeRatesResponse);
+  rpc GetExchangeRates(ExchangeRateRequest) returns (ExchangeRatesResponse);
 
   // Получение курса обмена для конкретной валюты
   rpc GetExchangeRateForCurrency(CurrencyRequest) returns (ExchangeRateResponse);
@@ -23,12 +23,16 @@ message CurrencyRequest {
 message ExchangeRateResponse {
   string from_currency = 1;
   string to_currency = 2;
-  float rate = 3;
+  double rate = 3;
 }
 
 // Ответ с курсами обмена всех валют
 message ExchangeRatesResponse {
-  map<string, float> rates = 1; // ключ: валюта, значение: курс
+  map<string, double> rates = 1; // ключ: валюта, значение: курс
+}
+
+message ExchangeRateRequest {
+  string base = 1;
 }
 
 // Пустое сообщение
