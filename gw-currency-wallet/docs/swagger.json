@@ -1,0 +1,550 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Currency wallet service API",
+        "title": "Wallet API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8081",
+    "basePath": "/api/v1",
+    "paths": {
+        "/balance": {
+            "get": {
+                "description": "Returns balances for all currencies belonging to the authenticated user\nEnter your JWT token as: Bearer \u003ctoken\u003e",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallet"
+                ],
+                "summary": "Get user wallet balances",
+                "responses": {
+                    "200": {
+                        "description": "User balances",
+                        "schema": {
+                            "$ref": "#/definitions/balance.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user id",
+                        "schema": {
+                            "$ref": "#/definitions/balance.response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/balance.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/balance.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/exchange": {
+            "post": {
+                "description": "Converts funds from one currency to another for the authenticated user\nEnter your JWT token as: Bearer \u003ctoken\u003e",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallet"
+                ],
+                "summary": "Exchange currency",
+                "parameters": [
+                    {
+                        "description": "Currency exchange request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/exchange.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Exchange successful",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or user id",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/exchange/rates/{BASE}": {
+            "get": {
+                "description": "Returns exchange rates for the specified base currency\nEnter your JWT token as: Bearer \u003ctoken\u003e",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "exchange"
+                ],
+                "summary": "Get exchange rates",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "USD",
+                        "description": "Base currency code (ISO 4217)",
+                        "name": "BASE",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Exchange rates",
+                        "schema": {
+                            "$ref": "#/definitions/get.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid base currency",
+                        "schema": {
+                            "$ref": "#/definitions/get.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/get.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Authenticates user and returns JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/login.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/login.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/login.response"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username or password",
+                        "schema": {
+                            "$ref": "#/definitions/login.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/login.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "Creates a new user account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register new user",
+                "parameters": [
+                    {
+                        "description": "User registration data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/register.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User registered successfully",
+                        "schema": {
+                            "$ref": "#/definitions/register.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/register.response"
+                        }
+                    },
+                    "401": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/register.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/register.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallet/deposit": {
+            "post": {
+                "description": "Adds money to the authenticated user's wallet in the specified currency\nEnter your JWT token as: Bearer \u003ctoken\u003e",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallet"
+                ],
+                "summary": "Deposit funds to wallet",
+                "parameters": [
+                    {
+                        "description": "Deposit request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deposit.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deposit successful",
+                        "schema": {
+                            "$ref": "#/definitions/deposit.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/deposit.response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/deposit.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/deposit.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallet/withdraw": {
+            "post": {
+                "description": "Withdraws money from the authenticated user's wallet in the specified currency\nEnter your JWT token as: Bearer \u003ctoken\u003e",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallet"
+                ],
+                "summary": "Withdraw funds from wallet",
+                "parameters": [
+                    {
+                        "description": "Withdraw request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/withdraw.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Withdraw successful",
+                        "schema": {
+                            "$ref": "#/definitions/withdraw.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/withdraw.response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/withdraw.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/withdraw.response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "balance.response": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": "failed get balance"
+                }
+            }
+        },
+        "deposit.request": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number",
+                    "example": 100.5
+                },
+                "currency": {
+                    "type": "string",
+                    "example": "USD"
+                }
+            }
+        },
+        "deposit.response": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": "invalid request"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Account topped up successfully"
+                }
+            }
+        },
+        "exchange.request": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number",
+                    "example": 100.5
+                },
+                "from_currency": {
+                    "type": "string",
+                    "example": "USD"
+                },
+                "to_currency": {
+                    "type": "string",
+                    "example": "EUR"
+                }
+            }
+        },
+        "exchange.response": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": "insufficient funds"
+                },
+                "exchanged_amount": {
+                    "type": "number",
+                    "example": 92.35
+                },
+                "message": {
+                    "type": "string",
+                    "example": "exchange successful"
+                }
+            }
+        },
+        "get.response": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "invalid base currency"
+                },
+                "rates": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                }
+            }
+        },
+        "login.request": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "user1"
+                }
+            }
+        },
+        "login.response": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "invalid credentials"
+                },
+                "token": {
+                    "type": "string",
+                    "example": "jwt-token"
+                }
+            }
+        },
+        "register.request": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user1@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "user1"
+                }
+            }
+        },
+        "register.response": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "email already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "user registered successfully"
+                }
+            }
+        },
+        "withdraw.request": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number",
+                    "example": 50.25
+                },
+                "currency": {
+                    "type": "string",
+                    "example": "USD"
+                }
+            }
+        },
+        "withdraw.response": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": "insufficient funds"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Withdrawal successful"
+                }
+            }
+        }
+    }
+}

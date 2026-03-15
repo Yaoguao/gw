@@ -3,8 +3,8 @@
   <component name="ProjectTreeColorHighlighter">
     <files>
       <node color="3" path="$PROJECT_DIR$" />
-      <node color="1" path="$PROJECT_DIR$/gw-currency-wallet" />
-      <node color="4" path="$PROJECT_DIR$/gw-exchanger" />
+      <node color="4" path="$PROJECT_DIR$/gw-currency-wallet" />
+      <node color="6" path="$PROJECT_DIR$/gw-exchanger" />
       <node color="1" path="$PROJECT_DIR$/gw-notification" />
       <node color="6" path="$PROJECT_DIR$/protos" />
     </files>

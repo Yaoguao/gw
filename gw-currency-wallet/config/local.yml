@@ -1,0 +1,23 @@
+env: "dev"
+http_server:
+  address: ":8081"
+  timeout: 4s
+  idle_timeout: 60s
+
+cache_ttl: 2m
+
+jwt:
+  token_ttl: 1h
+
+storage:
+  postgres:
+    max_open_conns: 50
+    max_idle_conns: 50
+    max_idle_time: 10m
+    conn_attempts: 10
+    base_retry_delay: 100ms
+    max_retry_delay: 5s
+
+gw-exchanger:
+  grpc:
+    addr: localhost:44044

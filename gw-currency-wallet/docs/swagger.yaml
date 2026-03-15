@@ -1,0 +1,379 @@
+basePath: /api/v1
+definitions:
+  balance.response:
+    properties:
+      balance:
+        additionalProperties:
+          format: float64
+          type: number
+        type: object
+      error:
+        example: failed get balance
+        type: string
+    type: object
+  deposit.request:
+    properties:
+      amount:
+        example: 100.5
+        type: number
+      currency:
+        example: USD
+        type: string
+    type: object
+  deposit.response:
+    properties:
+      balance:
+        additionalProperties:
+          format: float64
+          type: number
+        type: object
+      error:
+        example: invalid request
+        type: string
+      message:
+        example: Account topped up successfully
+        type: string
+    type: object
+  exchange.request:
+    properties:
+      amount:
+        example: 100.5
+        type: number
+      from_currency:
+        example: USD
+        type: string
+      to_currency:
+        example: EUR
+        type: string
+    type: object
+  exchange.response:
+    properties:
+      balance:
+        additionalProperties:
+          format: float64
+          type: number
+        type: object
+      error:
+        example: insufficient funds
+        type: string
+      exchanged_amount:
+        example: 92.35
+        type: number
+      message:
+        example: exchange successful
+        type: string
+    type: object
+  get.response:
+    properties:
+      error:
+        example: invalid base currency
+        type: string
+      rates:
+        additionalProperties:
+          format: float64
+          type: number
+        type: object
+    type: object
+  login.request:
+    properties:
+      password:
+        example: password123
+        type: string
+      username:
+        example: user1
+        type: string
+    type: object
+  login.response:
+    properties:
+      error:
+        example: invalid credentials
+        type: string
+      token:
+        example: jwt-token
+        type: string
+    type: object
+  register.request:
+    properties:
+      email:
+        example: user1@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+      username:
+        example: user1
+        type: string
+    type: object
+  register.response:
+    properties:
+      error:
+        example: email already exists
+        type: string
+      message:
+        example: user registered successfully
+        type: string
+    type: object
+  withdraw.request:
+    properties:
+      amount:
+        example: 50.25
+        type: number
+      currency:
+        example: USD
+        type: string
+    type: object
+  withdraw.response:
+    properties:
+      balance:
+        additionalProperties:
+          format: float64
+          type: number
+        type: object
+      error:
+        example: insufficient funds
+        type: string
+      message:
+        example: Withdrawal successful
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: Currency wallet service API
+  title: Wallet API
+  version: "1.0"
+paths:
+  /balance:
+    get:
+      description: |-
+        Returns balances for all currencies belonging to the authenticated user
+        Enter your JWT token as: Bearer <token>
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User balances
+          schema:
+            $ref: '#/definitions/balance.response'
+        "400":
+          description: Invalid user id
+          schema:
+            $ref: '#/definitions/balance.response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/balance.response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/balance.response'
+      summary: Get user wallet balances
+      tags:
+      - wallet
+  /exchange:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Converts funds from one currency to another for the authenticated user
+        Enter your JWT token as: Bearer <token>
+      parameters:
+      - description: Currency exchange request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/exchange.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Exchange successful
+          schema:
+            $ref: '#/definitions/exchange.response'
+        "400":
+          description: Invalid request or user id
+          schema:
+            $ref: '#/definitions/exchange.response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/exchange.response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/exchange.response'
+      summary: Exchange currency
+      tags:
+      - wallet
+  /exchange/rates/{BASE}:
+    get:
+      description: |-
+        Returns exchange rates for the specified base currency
+        Enter your JWT token as: Bearer <token>
+      parameters:
+      - description: Base currency code (ISO 4217)
+        example: USD
+        in: path
+        name: BASE
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Exchange rates
+          schema:
+            $ref: '#/definitions/get.response'
+        "400":
+          description: Invalid base currency
+          schema:
+            $ref: '#/definitions/get.response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/get.response'
+      summary: Get exchange rates
+      tags:
+      - exchange
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates user and returns JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/login.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: JWT token
+          schema:
+            $ref: '#/definitions/login.response'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/login.response'
+        "401":
+          description: Invalid username or password
+          schema:
+            $ref: '#/definitions/login.response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/login.response'
+      summary: User login
+      tags:
+      - auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account
+      parameters:
+      - description: User registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/register.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User registered successfully
+          schema:
+            $ref: '#/definitions/register.response'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/register.response'
+        "401":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/register.response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/register.response'
+      summary: Register new user
+      tags:
+      - auth
+  /wallet/deposit:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Adds money to the authenticated user's wallet in the specified currency
+        Enter your JWT token as: Bearer <token>
+      parameters:
+      - description: Deposit request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/deposit.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deposit successful
+          schema:
+            $ref: '#/definitions/deposit.response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/deposit.response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/deposit.response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/deposit.response'
+      summary: Deposit funds to wallet
+      tags:
+      - wallet
+  /wallet/withdraw:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Withdraws money from the authenticated user's wallet in the specified currency
+        Enter your JWT token as: Bearer <token>
+      parameters:
+      - description: Withdraw request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/withdraw.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Withdraw successful
+          schema:
+            $ref: '#/definitions/withdraw.response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/withdraw.response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/withdraw.response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/withdraw.response'
+      summary: Withdraw funds from wallet
+      tags:
+      - wallet
+swagger: "2.0"
