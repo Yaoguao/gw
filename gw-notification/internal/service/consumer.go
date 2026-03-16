@@ -28,6 +28,8 @@ func New(log *slog.Logger, saver TranslationSaver) *ConsumerHandler {
 }
 
 func (c *ConsumerHandler) MessageHandler(ctx context.Context, msg amqp091.Delivery) error {
+	c.log.Info("handle msg", msg)
+
 	var translation models.LargeTranslation
 
 	err := json.Unmarshal(msg.Body, &translation)

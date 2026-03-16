@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gw-notification/internal/config"
 	"gw-notification/internal/domain/models"
+	"log/slog"
 	"time"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -12,11 +13,13 @@ import (
 )
 
 type MongoStorage struct {
+	log *slog.Logger
+
 	client *mongo.Client
 	col    *mongo.Collection
 }
 
-func NewMongoStorage(cfg *config.Config) (*MongoStorage, error) {
+func NewMongoStorage(cfg *config.Config, log *slog.Logger) (*MongoStorage, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -34,6 +37,7 @@ func NewMongoStorage(cfg *config.Config) (*MongoStorage, error) {
 	col := db.Collection("translation")
 
 	return &MongoStorage{
+		log:    log,
 		client: client,
 		col:    col,
 	}, nil
@@ -47,6 +51,8 @@ func (m *MongoStorage) Close() {
 }
 
 func (m *MongoStorage) CreateTranslation(ctx context.Context, translation models.LargeTranslation) error {
+
+	m.log.Debug("CreateTranslation model", translation)
 
 	_, err := m.col.InsertOne(ctx, translation)
 

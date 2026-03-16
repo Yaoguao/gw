@@ -35,6 +35,30 @@ func New(log *slog.Logger, cfg *config.Config) *App {
 		panic(err)
 	}
 
+	err = client.DeclareExchange(
+		cfg.RabbitMQ.Exchange,
+		"direct",
+		true,
+		false,
+		false,
+		nil,
+	)
+
+	if err != nil {
+		log.Error("error", err.Error())
+		panic(err)
+	}
+
+	err = client.DeclareQueue(
+		cfg.RabbitMQ.LargeTranslationQueue,
+		cfg.RabbitMQ.Exchange,
+		"translation.large",
+		false,
+		false,
+		false,
+		nil,
+	)
+
 	return &App{
 		Client: client,
 	}

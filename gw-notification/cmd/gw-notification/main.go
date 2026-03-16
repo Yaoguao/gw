@@ -20,7 +20,7 @@ func main() {
 
 	log.Debug("config", cfg)
 
-	storage, err := mongodb.NewMongoStorage(cfg)
+	storage, err := mongodb.NewMongoStorage(cfg, log)
 
 	if err != nil {
 		panic(err)
@@ -42,6 +42,8 @@ func main() {
 		ConsumingStrat: strategy,
 	}
 
+	client, err := rabbitmq.NewClient(rabbitCfg)
+
 	consumerCfg := rabbitmq.ConsumerConfig{
 		Queue:       cfg.RabbitMQ.LargeTranslationQueue,
 		ConsumerTag: "gw-notification",
@@ -58,8 +60,6 @@ func main() {
 
 		Args: nil,
 	}
-
-	client, err := rabbitmq.NewClient(rabbitCfg)
 
 	if err != nil {
 		panic(err)
