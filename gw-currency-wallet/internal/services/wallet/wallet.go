@@ -153,7 +153,7 @@ func (s *ServiceWallet) GetWalletsBalanceByUser(ctx context.Context, userID uuid
 	wallets, err := s.getterWallet.GetWalletsByUser(ctx, userID)
 
 	if err != nil {
-		s.log.Error("failed get wallets by user", err.Error())
+		s.log.Error("failed get wallets by user", "error", err.Error())
 
 		return nil, fmt.Errorf("failed get wallets by user")
 	}
