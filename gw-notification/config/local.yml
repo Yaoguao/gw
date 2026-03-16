@@ -1,0 +1,14 @@
+env: "dev"
+
+rabbit_mq:
+  url: "amqp://guest:guest@localhost:5672/"
+
+  exchange: "translation.events"
+  large_translation_queue: "translation.large.queue"
+
+  prefetch_count: 10
+  reconnect_delay: 5s
+
+storage:
+  mongodb:
+    db_name: "notificationdb"
