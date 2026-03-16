@@ -23,6 +23,16 @@ type Config struct {
 		Secret   string
 	} `yaml:"jwt"`
 
+	RabbitMQ struct {
+		URL string `yaml:"url"`
+
+		Exchange              string `yaml:"exchange"`
+		LargeTranslationQueue string `yaml:"large_translation_queue"`
+
+		PrefetchCount  int           `yaml:"prefetch_count"`
+		ReconnectDelay time.Duration `yaml:"reconnect_delay"`
+	} `yaml:"rabbit_mq"`
+
 	StorageConfig struct {
 		Postgres struct {
 			DSN            string

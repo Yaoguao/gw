@@ -2,6 +2,7 @@ package app
 
 import (
 	httpapp "gw-currency-wallet/internal/app/http"
+	rabbimqapp "gw-currency-wallet/internal/app/rabbitmq"
 	"gw-currency-wallet/internal/config"
 	"gw-currency-wallet/internal/http-server/handlers/auth/login"
 	"gw-currency-wallet/internal/http-server/handlers/auth/register"
@@ -14,22 +15,28 @@ import (
 	"gw-currency-wallet/internal/http-server/middleware/logger"
 	"gw-currency-wallet/internal/services/auth"
 	"gw-currency-wallet/internal/services/exchanger"
+	"gw-currency-wallet/internal/services/translation"
 	"gw-currency-wallet/internal/services/wallet"
 	exchangerstorage "gw-currency-wallet/internal/storage/exchanger"
 	"gw-currency-wallet/internal/storage/postgres"
 	pgxdriver "gw-currency-wallet/pkg/pgx-driver"
 	"gw-currency-wallet/pkg/pgx-driver/transaction"
+	"gw-currency-wallet/pkg/rabbitmq"
 	"log/slog"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	httpSwagger "github.com/swaggo/http-swagger"
+
+	translationhandler "gw-currency-wallet/internal/http-server/handlers/translation"
 )
 
 type App struct {
 	HTTPServer *httpapp.App
 
 	Postgres *pgxdriver.Postgres
+
+	Rabbitmq *rabbimqapp.App
 }
 
 func New(log *slog.Logger, cfg *config.Config) *App {
@@ -56,14 +63,24 @@ func New(log *slog.Logger, cfg *config.Config) *App {
 	exchangeRepo := postgres.NewExchangeRepository(log, storage)
 	transactionRepo := postgres.NewTransactionRepository(log, storage)
 	exchangeClient, err := exchangerstorage.NewClient(cfg.GwExchange.GRPC.Addr)
+
 	if err != nil {
 		log.Error("panic error", err.Error())
 		panic(err)
 	}
 
+	rmqClient := rabbimqapp.New(log, cfg)
+
+	publisher := rabbitmq.NewPublisher(
+		rmqClient.Client,
+		cfg.RabbitMQ.Exchange,
+		"application/json")
+
 	authService := auth.New(log, userRepo, userRepo, cfg.JWT.TokenTTL, cfg.JWT.Secret)
 	exchangerService := exchanger.NewServiceExchanger(txManger, log, exchangeClient, exchangeRepo, walletRepo, walletRepo, cfg.CacheTTL)
 	walletService := wallet.NewServiceWallet(txManger, log, walletRepo, transactionRepo, walletRepo, walletRepo)
+
+	translationService := translation.NewServiceTranslation(txManger, log, walletRepo, walletRepo, publisher)
 
 	router := chi.NewRouter()
 
@@ -88,6 +105,8 @@ func New(log *slog.Logger, cfg *config.Config) *App {
 			r.Post("/wallet/withdraw", withdraw.New(log, walletService, walletService))
 			r.Get("/exchange/rates/{BASE}", get.New(log, exchangerService))
 			r.Post("/exchange", exchange.New(log, exchangerService, walletService))
+
+			r.Post("/translation", translationhandler.New(log, translationService))
 		})
 	})
 
@@ -103,5 +122,6 @@ func New(log *slog.Logger, cfg *config.Config) *App {
 	return &App{
 		HTTPServer: server,
 		Postgres:   storage,
+		Rabbitmq:   rmqClient,
 	}
 }

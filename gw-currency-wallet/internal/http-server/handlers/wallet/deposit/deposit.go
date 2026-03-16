@@ -53,6 +53,7 @@ func New(log *slog.Logger, wallet WalletGetter, depositable Depositable) http.Ha
 		if err != nil {
 			log.Error("error parse uid", err.Error())
 			handlers.ErrorResponse(w, r, http.StatusBadRequest, "error parse uid")
+			return
 		}
 
 		var req request

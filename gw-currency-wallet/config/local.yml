@@ -18,6 +18,15 @@ storage:
     base_retry_delay: 100ms
     max_retry_delay: 5s
 
+rabbit_mq:
+  url: "amqp://guest:guest@localhost:5672/"
+
+  exchange: "translation.events"
+  large_translation_queue: "translation.large.queue"
+
+  prefetch_count: 10
+  reconnect_delay: 5s
+
 gw-exchanger:
   grpc:
     addr: localhost:44044

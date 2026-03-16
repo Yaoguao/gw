@@ -43,6 +43,37 @@ services:
       timeout: 3s
       retries: 5
 
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - .env
+    networks:
+      - mynetwork
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+
+  notification-db:
+    image: mongo:latest
+    container_name: notification-db
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - notification_data:/data/db
+    networks:
+      - mynetwork
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
 networks:
   mynetwork:
     driver: bridge
@@ -50,3 +81,5 @@ networks:
 volumes:
   wallet_data:
   exchanger_data:
+  rabbitmq_data:
+  notification_data:
